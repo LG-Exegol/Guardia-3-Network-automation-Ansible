@@ -1,0 +1,24 @@
+---
+- name: Check UFW status
+  command: ufw status
+  register: ufw_status
+  changed_when: false
+  ignore_errors: yes
+
+- name: Enable UFW if inactive
+  command: ufw --force enable
+  when: '"inactive" in ufw_status.stdout'
+
+- name: Load predefined firewall rules
+  copy:
+    src: rules.conf
+    dest: /etc/ufw/before.rules
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Reload firewall
+
+- name: Allow SSH
+  ufw:
+    rule: allow
+    name: OpenSSH

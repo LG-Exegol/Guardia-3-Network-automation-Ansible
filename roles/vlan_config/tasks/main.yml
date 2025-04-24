@@ -1,0 +1,22 @@
+---
+- name: Configure VLAN 1 on VyOS
+  when: inventory_hostname == "192.168.5.15"
+  vyos_config:
+    lines:
+      - set interfaces ethernet eth0 vif 10 address '192.168.10.1/24'
+      - set service dhcp-server shared-network-name VLAN10 subnet 192.168.10.0/24 subnet-id 10 default-router '192.168.10.1'
+      - set service dhcp-server shared-network-name VLAN10 subnet 192.168.10.0/24 subnet-id 10 range 0 start '192.168.10.100'
+      - set service dhcp-server shared-network-name VLAN10 subnet 192.168.10.0/24 subnet-id 10 range 0 stop '192.168.10.200'
+
+- name: Configure VLAN 2 on VyOS
+  when: inventory_hostname == "192.168.5.15"
+  vyos_config:
+    lines:
+      - set interfaces ethernet eth0 vif 20 address '192.168.20.1/24'
+      - set service dhcp-server shared-network-name VLAN20 subnet 192.168.20.0/24 subnet-id 20 default-router '192.168.20.1'
+      - set service dhcp-server shared-network-name VLAN20 subnet 192.168.20.0/24 subnet-id 20 range 0 start '192.168.20.100'
+      - set service dhcp-server shared-network-name VLAN20 subnet 192.168.20.0/24 subnet-id 20 range 0 stop '192.168.20.200'
+
+- name: Commit VLAN config
+  vyos_config:
+    save: yes

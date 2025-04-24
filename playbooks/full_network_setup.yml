@@ -1,0 +1,11 @@
+# playbooks/full_network_setup.yml
+- name: Network Setup and Security Enforcement
+  hosts: all
+  become: true
+  gather_facts: yes
+
+  roles:
+    - firewall
+    - networking
+    - vlan_config
+    - network_tests

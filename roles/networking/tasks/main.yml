@@ -1,0 +1,41 @@
+---
+- name: Gather IP addresses
+  setup:
+    filter: ansible_all_ipv4_addresses
+
+- name: Debug current IP
+  debug:
+    msg: "Current IPs: {{ ansible_all_ipv4_addresses }}"
+
+- name: Ensure correct IP on VyOS
+  when: inventory_hostname == "192.168.5.15"
+  block:
+    - name: Check if IP is correct
+      assert:
+        that:
+          - "'192.168.5.15' in ansible_all_ipv4_addresses"
+        fail_msg: "Incorrect IP configured on VyOS"
+        success_msg: "Correct IP on VyOS"
+
+- name: Ensure correct IP on OpenSense
+  when: inventory_hostname == "192.168.5.1"
+  block:
+    - name: Check if IP is correct
+      assert:
+        that:
+          - "'192.168.5.1' in ansible_all_ipv4_addresses"
+        fail_msg: "Incorrect IP configured on OpenSense"
+        success_msg: "Correct IP on OpenSense"
+
+- name: Ensure correct IP on Ansible Controller
+  when: inventory_hostname == "192.168.7.2"
+  block:
+    - name: Check if IP is correct
+      assert:
+        that:
+          - "'192.168.7.2' in ansible_all_ipv4_addresses"
+        fail_msg: "Ansible controller has wrong IP!"
+        success_msg: "Ansible controller IP is valid"
+
+
+#192.168.5.1 peux être changé par un intervalle d'IP
