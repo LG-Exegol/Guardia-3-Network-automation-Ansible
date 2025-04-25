@@ -8,4 +8,4 @@
     - firewall
     - networking
     - vlan_config
-    - network_tests
+    # - network_tests

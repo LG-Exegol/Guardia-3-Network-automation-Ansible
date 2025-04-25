@@ -1,24 +1,24 @@
----
-- name: Check UFW status
-  command: ufw status
-  register: ufw_status
-  changed_when: false
-  ignore_errors: yes
-
-- name: Enable UFW if inactive
-  command: ufw --force enable
-  when: '"inactive" in ufw_status.stdout'
-
-- name: Load predefined firewall rules
-  copy:
-    src: rules.conf
-    dest: /etc/ufw/before.rules
-    owner: root
-    group: root
-    mode: '0644'
-  notify: Reload firewall
-
-- name: Allow SSH
-  ufw:
-    rule: allow
-    name: OpenSSH
+- name: Add firewall rules for both VLANs
+  hosts: localhost
+  tasks:
+    - name: Create rule to allow SSH
+      uri:
+        url: "https://192.168.5.1/api/firewall/rule/add"
+        method: POST
+        user: "{{ opnsense_api_key }}"
+        password: "{{ opnsense_api_secret }}"
+        body_format: json
+        body:
+          interface: "lan"
+          action: "pass"
+          protocol: "tcp"
+          source: "any"
+          destination: "{{ item }}"
+          destination_port: "22"
+          description: "Allow SSH to {{ item }}"
+        validate_certs: false
+      loop:
+        - 192.168.10.1
+        - 192.168.20.1
+        - 192.168.6.1
+        - 192.168.7.1
